@@ -7,6 +7,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # initialize browser, create data dictionary and end webdriver and return scraped data
 def scrape_all():
+ 
     # Initiate headless driver for deployment
     executable_path = {'executable_path': ChromeDriverManager().install()}
     browser = Browser('chrome', **executable_path, headless=True)
@@ -20,9 +21,10 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
+        "hemispheres": hemi_scrape(browser),
         "last_modified": dt.datetime.now()
     }
-
+   
     # end automated browsing session
     # Stop webdriver and return data
     browser.quit()
@@ -79,11 +81,7 @@ def featured_image(browser):
     except AttributeError:
         return None
 
-    # Find the relative image url. img tag nexted within this HTML so its included. .get('src') pulls the link to the image
-    # We are telling beautifulsoup to look inside img tag for an image with a class of fancybox-image. 
-    img_url_rel = img_soup.find('img', class_='fancybox-image').get('src')
-    img_url_rel
-
+       
     # Use the base URL to create an absolute URL
     img_url = f'https://spaceimages-mars.com/{img_url_rel}'
     return img_url
@@ -100,15 +98,77 @@ def mars_facts():
     except BaseException:
       return None
 
-    
-    # assign columns and set index of dataframe
-    df.columns=['description', 'Mars', 'Earth']
-    df.set_index('description', inplace=True)
-    
+    # Assign Columns and set index of dataframe
+          
     # add .to_html() to convert df back to html ready code, add bootstrap
-    return df.to_html()
+    return df.to_html()  
+
+    
+def hemi_scrape(browser):
+    url = 'https://marshemispheres.com/'
+    browser.visit(url + 'index.html')
+    hemisphere_image_urls = []
+
+    # executable_path = {'executable_path': ChromeDriverManager().install()}
+    # browser = Browser('chrome', **executable_path, headless=True)
+  
+    for i in range(4):
+    
+        # Find the elements on each loop to avoid a stale element exception
+        browser.find_by_css("a.product-item img")[i].click()
+        hemi_data = scrape_hemisphere(browser.html)
+        hemi_data['img_url'] = url + hemi_data['img_url']
+        # Append hemisphere object to list
+        hemisphere_image_urls.append(hemi_data)
+        # Finally, we navigate backwards
+        browser.back()
+
+    return hemisphere_image_urls  
+    
+    
+
+def scrape_hemisphere(html_text):
+    # parse html text
+    hemi_soup = soup(html_text, "html.parser")
+
+    # adding try/except for error handling
+    try:
+        title_elem = hemi_soup.find("h2", class_="title").get_text()
+        sample_elem = hemi_soup.find("a", text="Sample").get("href")
+
+    except AttributeError:
+        # Image error will return None, for better front-end handling
+        title_elem = None
+        sample_elem = None
+
+    hemispheres = {
+        "title": title_elem,
+        "img_url": sample_elem
+    }
+
+    return hemispheres
     
 # tell Flask script is complete and ready. print statement prints results to terminal after executing the code
 if __name__ == "__main__":
     # If running as script, print scraped data
     print(scrape_all())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
