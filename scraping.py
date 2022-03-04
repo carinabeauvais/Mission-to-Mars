@@ -117,19 +117,16 @@ def hemispheres(browser):
     # browser = Browser('chrome', **executable_path, headless=True)
   
     for i in range(4):
-        try:
-
-            # Find the elements on each loop to avoid a stale element exception
-            browser.find_by_css("a.product-item img")[i].click()
-            hemi_data = scrape_hemisphere(browser.html)
-            hemi_data['img_url'] = url + hemi_data['img_url']
-            # Append hemisphere object to list
-            hemisphere_image_urls.append(hemi_data)
-            # Finally, we navigate backwards
-            browser.back()
-        except:
-            return "error"
-    
+        
+        # Find the elements on each loop to avoid a stale element exception
+        browser.find_by_css("a.product-item img")[i].click()
+        hemi_data = scrape_hemisphere(browser.html)
+        hemi_data['img_url'] = url + hemi_data['img_url']
+        # Append hemisphere object to list
+        hemisphere_image_urls.append(hemi_data)
+        # Finally, we navigate backwards
+        browser.back()
+            
         # Find the elements on each loop to avoid a stale element exception
         browser.find_by_css("a.product-item img")[i].click()
         hemi_data = scrape_hemisphere(browser.html)
