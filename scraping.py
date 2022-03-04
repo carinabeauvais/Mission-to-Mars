@@ -21,11 +21,7 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-<<<<<<< HEAD
         "hemispheres": hemispheres(browser),
-=======
-        "hemispheres": hemi_scrape(browser),
->>>>>>> 666f01bb01c16b527f90a4d72b1b0ddf8f3e6dcd
         "last_modified": dt.datetime.now()
     }
    
@@ -103,31 +99,24 @@ def mars_facts():
       return None
 
     # Assign Columns and set index of dataframe
-<<<<<<< HEAD
     df.columns=['description', 'Mars', 'Earth']
     df.set_index('description', inplace=True)
 
-=======
           
->>>>>>> 666f01bb01c16b527f90a4d72b1b0ddf8f3e6dcd
     # add .to_html() to convert df back to html ready code, add bootstrap
     return df.to_html()  
 
     
-<<<<<<< HEAD
 def hemispheres(browser):
-=======
-def hemi_scrape(browser):
->>>>>>> 666f01bb01c16b527f90a4d72b1b0ddf8f3e6dcd
     url = 'https://marshemispheres.com/'
     browser.visit(url + 'index.html')
+        
     hemisphere_image_urls = []
 
     # executable_path = {'executable_path': ChromeDriverManager().install()}
     # browser = Browser('chrome', **executable_path, headless=True)
   
     for i in range(4):
-<<<<<<< HEAD
         try:
 
             # Find the elements on each loop to avoid a stale element exception
@@ -140,7 +129,6 @@ def hemi_scrape(browser):
             browser.back()
         except:
             return "error"
-=======
     
         # Find the elements on each loop to avoid a stale element exception
         browser.find_by_css("a.product-item img")[i].click()
@@ -150,7 +138,6 @@ def hemi_scrape(browser):
         hemisphere_image_urls.append(hemi_data)
         # Finally, we navigate backwards
         browser.back()
->>>>>>> 666f01bb01c16b527f90a4d72b1b0ddf8f3e6dcd
 
     return hemisphere_image_urls  
     
